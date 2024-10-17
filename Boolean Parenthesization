@@ -1,0 +1,79 @@
+#User function Template for pytho
+
+class Solution:
+    def countWays(self, n, s):
+        
+        dp = [[[-1, -1] for _ in range(201)] for _ in range(201)]
+        def dp_util(s,i, j, isTrue):
+            
+            if i>j:
+                return 0
+                
+                
+            if dp[i][j][isTrue]!=-1:
+                return dp[i][j][isTrue]
+                
+            elif i==j:
+                if isTrue:
+                    if s[i]=='T':
+                        return 1
+                    else:
+                        return 0
+                else:
+                    if s[i]=='F':
+                        return 1
+                    else:
+                        return 0
+            
+            
+            ans = 0   
+            for k in range(i+1,j,2):
+                
+                if dp[i][k-1][True]!=-1:
+                    tl = dp[i][k-1][True]
+                else:
+                    tl = dp_util(s,i,k-1, True)
+                
+                if dp[i][k-1][False]!=-1:
+                    fl = dp[i][k-1][False]
+                else:
+                    fl = dp_util(s,i,k-1, False)
+                
+                if dp[k+1][j][True]!=-1:
+                    tr = dp[k+1][j][True]
+                else:
+                    tr = dp_util(s,k+1,j, True)
+                
+                if dp[k+1][j][False]!=-1:
+                    fr = dp[k+1][j][False]
+                else:
+                    fr = dp_util(s,k+1,j, False)
+                
+                # print(tl,fl,tr,fr)
+                
+                if s[k]=="&":
+                    # print("&", s[k])
+                    if isTrue:
+                        ans+= tl*tr
+                    else:
+                        ans+= tl*fr + fl*fr + fl*tr
+                elif s[k]=="|":
+                    # print("|", s[k])
+                    if isTrue:
+                        ans+= tl*tr + tl*fr + fl*tr
+                    else:
+                        ans+= fl*fr
+                elif s[k]=="^":
+                    # print("^", s[k])
+                    if isTrue:
+                        ans+= tl*fr + fl*tr
+                    else:
+                        ans+= tl*tr + fl*fr
+                # print(ans)
+            dp[i][j][isTrue] = ans%1003
+            # print(map_)
+            return dp[i][j][isTrue]
+        
+        return dp_util(s,0,n-1,True)
+            
+        
