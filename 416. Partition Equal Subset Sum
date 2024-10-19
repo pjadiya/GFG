@@ -1,0 +1,44 @@
+class Solution:
+    def IsOdd(self, val: int) -> bool:
+        if val%2!=0:
+            return True
+        return False
+
+    def dp_util(self, nums: List[int], target: int, idx: int, dp: List[List[int]]) -> bool:
+        if target==0:
+            return True
+        if idx<0:
+            return False
+        if dp[idx][target]!=-1:
+            return dp[idx][target]
+        if nums[idx-1]<=target:
+            dp[target][idx]= self.dp_util(nums, target-nums[idx-1], idx-1, dp) or self.dp_util(nums, target, idx-1, dp)
+        else :
+            dp[idx][target]= self.dp_util(nums, target, idx-1, dp)
+        return dp[target][idx]
+    
+    def canPartition(self, nums: List[int]) -> bool:
+        total = sum(nums)
+        """
+        check odd eve if od return False
+        cal half sum and that is target sum
+        make a util for dp and write recursive calls
+        """
+        if self.IsOdd(total):
+            return False
+        
+        target = total//2
+        n =len(nums)
+        dp = [[False for i in range(target+1)] for i in range(n+1)]
+        for i in range(n+1):
+            for j in range(target+1):
+                if i==0:
+                    dp[i][j]=False
+                if j==0:
+                    dp[i][j]=True
+                elif nums[i-1]<=j:
+                    dp[i][j] = (dp[i-1][j-nums[i-1]] or dp[i-1][j])
+                else:
+                    dp[i][j]=(dp[i-1][j])
+
+        return dp[n][target]
