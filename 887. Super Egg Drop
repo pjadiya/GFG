@@ -1,0 +1,31 @@
+class Solution:
+    def superEggDrop(self, k: int, n: int) -> int:
+        def sd(k,n,dp):
+            if k==1 : return n
+            if n<=1: return n
+            mn= float('inf')
+            if dp[k][n]!=-1:
+                return dp[k][n]
+            l=1
+            h=n
+            while h>=l:
+                x= (h+l)//2
+                if dp[k-1][x-1]!=-1:
+                    low=dp[k-1][x-1]
+                else:
+                    low=sd(k-1,x-1,dp)
+                if dp[k][n-x]!=-1:
+                    high=dp[k][n-x]
+                else:
+                    high=sd(k,n-x,dp)
+                if high>low:
+                    l=x+1
+                else:
+                    h=x-1
+                temp=max(low, high)+1
+                mn = min(temp,mn)
+            dp[k][n] =mn
+            return dp[k][n]
+        dp = [[-1 for i in range(n+1)] for i in range(k+1)]
+        ans = sd(k,n,dp)
+        return ans
